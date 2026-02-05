@@ -58,8 +58,10 @@ or
 - 2026-02-02 20:13:05,956 service=B endpoint=/call-echo status=error error="HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /echo?msg=hello (Caused by NewConnectionError("HTTPConnection(host='127.0.0.1', port=8080): Failed to establish a new connection: [Errno 61] Connection refused"))" latency_ms=0
 
 To debug:
-- Ping curl Service A to confirm if the Service A is up
-- Then Curl Service B and check Service B logs to see the connection or timeout error, increase timeout if Service A is slow in response
+ - Curl Service A directly to confirm it responds and measure latency (example:
+curl "http://127.0.0.1:8080/echo?msg=ping")
+ - Check Service A logs for stack traces or errors and verify the process is listening on the expected port (example: `lsof -iTCP -sTCP:LISTEN -P | grep 8080`).
+ - If Service A is running but slow/unresponsive, restart it, re-run the curl test, and consider increasing the client timeout or adding retries with backoff in Service B.
 
 
 
