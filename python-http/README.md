@@ -36,7 +36,7 @@ Stop Service A and rerun the curl command to observe failure handling.
 {"error":"HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /echo?msg=hello (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8080): Failed to establish a new connection: [Errno 61] Connection refused\"))","service_a":"unavailable","service_b":"ok"}
 
 ## What Makes This Distributed?
-This system is distributed because it has two different components (Service A and Service B) that are running as two independent processes and communicating with each other over the network via HTTP. Each Service has its own address, can fail independently, and deals with latency, partial failures, timeouts, etc.
+This system is distributed because it has two different components (Service A and Service B) that are running as two independent processes and communicating with each other over the network via HTTP. Each Service has its own address, can fail independently, and deals with latency, partial failures, timeouts, etc. It also introduces operational concerns like observability (logs/metrics/traces), independent scaling, and deployment of each service. These factors require distributed-system patterns such as health checks, timeouts/retries, and graceful degradation when dependencies are unavailable.
 
 ## What Happens on Timeout?
 The requests.get(...,timeout=1.0) in Service B will raise a requests.exceptions.Timeout when Service A does not respond within 1.0 second limit. This is called Timeout and on Timeout, the except block in Service B will be triggered and this makes: Sevice B logs an error message containing the exception string and returns HTTP 503 to the client with error field describing the timeout. 
